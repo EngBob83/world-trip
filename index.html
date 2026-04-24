@@ -7,488 +7,819 @@
 <title>World Trip — Leg 1: Reconnection</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=IM+Fell+English:ital@0;1&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <style>
   :root {
-    --ink: #f4e9d8;
-    --ink-soft: #c9b89a;
-    --muted: #8a7a63;
-    --bg-0: #1a0f1e;
-    --bg-1: #2a1530;
-    --bg-2: #3d1d34;
-    --panel: rgba(255, 245, 225, 0.05);
-    --panel-hi: rgba(255, 245, 225, 0.09);
-    --border: rgba(247, 185, 119, 0.18);
-    --border-hi: rgba(247, 185, 119, 0.4);
-    --accent: #ffb366;
-    --accent-hot: #ff7e5f;
-    --accent-cool: #c77dff;
-    --gold: #ffd27a;
-    --confirmed: #7dd87a;
-    --pending: #ffb366;
-    --visited: #a89b84;
+    --parchment:     #e9d6a8;
+    --parchment-hi:  #f3e3b8;
+    --parchment-lo:  #c9ab6f;
+    --parchment-shadow: #8a6a3a;
+    --ink:          #3d2817;
+    --ink-soft:     #5a3d22;
+    --ink-faded:    #7a5a38;
+    --red-ink:      #9a2c1e;
+    --red-ink-hi:   #c44a3a;
+    --gold-wax:     #c88a2e;
+    --gold-bright:  #e8b84c;
+    --wood-dark:    #4a2f18;
+    --wood-mid:     #6b4520;
+    --wood-light:   #9a6a32;
   }
+
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
     color: var(--ink);
-    font: 16px/1.6 "Inter", -apple-system, system-ui, sans-serif;
+    font: 17px/1.65 "IM Fell English", Georgia, serif;
     background:
-      radial-gradient(ellipse 1200px 800px at 20% 0%, rgba(255, 126, 95, 0.15), transparent 60%),
-      radial-gradient(ellipse 900px 700px at 90% 30%, rgba(199, 125, 255, 0.12), transparent 55%),
-      radial-gradient(ellipse 1000px 600px at 50% 100%, rgba(255, 210, 122, 0.08), transparent 60%),
-      linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 40%, var(--bg-2) 100%);
-    background-attachment: fixed;
+      /* Leather / dark wood around the scroll */
+      radial-gradient(ellipse at top, #1a0e05 0%, #0a0603 100%);
     min-height: 100vh;
     overflow-x: hidden;
   }
-  a { color: var(--gold); }
+  a { color: var(--red-ink); text-decoration: underline wavy; text-underline-offset: 3px; }
+
+  /* ======== THE SCROLL (outer container) ======== */
+  .scroll-stage {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 40px 20px 40px;
+    position: relative;
+  }
+
+  /* Top wooden rod */
+  .rod {
+    position: relative;
+    height: 28px;
+    background:
+      repeating-linear-gradient(90deg,
+        var(--wood-dark) 0px, var(--wood-mid) 1px, var(--wood-light) 2px, var(--wood-mid) 3px, var(--wood-dark) 4px),
+      linear-gradient(180deg, var(--wood-light) 0%, var(--wood-dark) 50%, var(--wood-mid) 100%);
+    border-radius: 14px;
+    box-shadow:
+      0 4px 12px rgba(0,0,0,0.6),
+      inset 0 2px 4px rgba(255, 220, 150, 0.3),
+      inset 0 -2px 4px rgba(0,0,0,0.4);
+    z-index: 3;
+  }
+  .rod::before, .rod::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, var(--wood-light), var(--wood-dark) 70%);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.7), inset -2px -2px 4px rgba(0,0,0,0.5), inset 2px 2px 4px rgba(255,200,130,0.3);
+    transform: translateY(-50%);
+  }
+  .rod::before { left: -10px; }
+  .rod::after  { right: -10px; }
+
+  /* The parchment itself */
+  .scroll {
+    position: relative;
+    background:
+      /* Age spots and stains */
+      radial-gradient(ellipse 300px 200px at 15% 25%, rgba(138, 106, 58, 0.22), transparent 60%),
+      radial-gradient(ellipse 220px 160px at 82% 60%, rgba(138, 106, 58, 0.18), transparent 60%),
+      radial-gradient(ellipse 180px 140px at 45% 90%, rgba(138, 106, 58, 0.14), transparent 60%),
+      radial-gradient(ellipse 140px 100px at 90% 15%, rgba(154, 44, 30, 0.08), transparent 70%),
+      /* Base parchment color with subtle variation */
+      linear-gradient(175deg, var(--parchment-hi) 0%, var(--parchment) 40%, var(--parchment-lo) 100%);
+    padding: 60px 50px 70px;
+    border-radius: 2px;
+    box-shadow: 0 40px 80px -10px rgba(0,0,0,0.8), 0 0 0 1px rgba(61,40,23,0.3);
+
+    /* Scroll unfurl animation */
+    transform-origin: top center;
+    animation: unfurl 2.2s cubic-bezier(.4, .1, .2, 1) both;
+  }
+  .scroll::before {
+    /* Subtle paper grain overlay */
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(90deg, transparent 0 2px, rgba(61,40,23,0.02) 2px 4px),
+      repeating-linear-gradient(0deg,  transparent 0 3px, rgba(61,40,23,0.02) 3px 6px);
+    pointer-events: none;
+    opacity: 0.6;
+  }
+  /* Aged torn edges at top and bottom */
+  .scroll::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0;
+    height: 14px;
+    background:
+      radial-gradient(ellipse 18px 10px at 4%  100%, var(--parchment-hi) 40%, transparent 50%),
+      radial-gradient(ellipse 22px 12px at 12% 100%, var(--parchment-hi) 45%, transparent 55%),
+      radial-gradient(ellipse 16px 8px  at 22% 100%, var(--parchment-hi) 40%, transparent 50%),
+      radial-gradient(ellipse 24px 14px at 32% 100%, var(--parchment-hi) 50%, transparent 55%),
+      radial-gradient(ellipse 18px 10px at 44% 100%, var(--parchment-hi) 40%, transparent 50%),
+      radial-gradient(ellipse 22px 12px at 55% 100%, var(--parchment-hi) 45%, transparent 55%),
+      radial-gradient(ellipse 16px 8px  at 66% 100%, var(--parchment-hi) 40%, transparent 50%),
+      radial-gradient(ellipse 24px 14px at 76% 100%, var(--parchment-hi) 50%, transparent 55%),
+      radial-gradient(ellipse 18px 10px at 86% 100%, var(--parchment-hi) 40%, transparent 50%),
+      radial-gradient(ellipse 22px 12px at 96% 100%, var(--parchment-hi) 45%, transparent 55%);
+    top: -13px;
+    pointer-events: none;
+  }
+  @keyframes unfurl {
+    0%   { transform: scaleY(0.02); opacity: 0; }
+    8%   { opacity: 1; }
+    25%  { transform: scaleY(0.15); }
+    55%  { transform: scaleY(0.6); }
+    80%  { transform: scaleY(1.02); }
+    100% { transform: scaleY(1); }
+  }
+
+  /* Content reveals after scroll finishes unfurling */
+  .scroll > * {
+    opacity: 0;
+    animation: fade-in 0.6s ease-out 1.9s forwards;
+  }
+  .scroll > *:nth-child(2) { animation-delay: 2.0s; }
+  .scroll > *:nth-child(3) { animation-delay: 2.1s; }
+  .scroll > *:nth-child(4) { animation-delay: 2.2s; }
+  .scroll > *:nth-child(5) { animation-delay: 2.3s; }
+  .scroll > *:nth-child(6) { animation-delay: 2.4s; }
+  @keyframes fade-in { to { opacity: 1; } }
 
   /* ==== HERO ==== */
   header.hero {
-    padding: 72px 24px 48px;
-    max-width: 1200px;
-    margin: 0 auto;
     text-align: center;
-    position: relative;
+    padding: 10px 0 28px;
+    border-bottom: 1px dashed rgba(61,40,23,0.25);
+    margin-bottom: 28px;
   }
   .kicker {
-    font: 600 11px/1 "Inter", sans-serif;
-    letter-spacing: 0.3em;
+    font: 700 11px/1 "Cinzel Decorative", serif;
+    letter-spacing: 0.4em;
     text-transform: uppercase;
-    color: var(--accent);
-    opacity: 0.85;
-    margin-bottom: 18px;
+    color: var(--red-ink);
+    margin-bottom: 14px;
   }
   h1 {
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 500;
-    font-variation-settings: "opsz" 144, "SOFT" 50;
-    font-size: clamp(44px, 8vw, 96px);
-    line-height: 0.95;
-    letter-spacing: -0.02em;
-    margin: 0 0 4px;
-    background: linear-gradient(135deg, #fff5e0 0%, var(--accent) 40%, var(--accent-hot) 70%, var(--accent-cool) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    font-family: "Cinzel Decorative", serif;
+    font-weight: 900;
+    font-size: clamp(42px, 7vw, 78px);
+    line-height: 1;
+    letter-spacing: 0.01em;
+    margin: 0;
+    color: var(--ink);
+    text-shadow:
+      1px 1px 0 rgba(154, 44, 30, 0.2),
+      3px 3px 0 rgba(61, 40, 23, 0.1);
   }
-  h1 em {
+  h1 .amp {
+    color: var(--red-ink);
+    font-family: "IM Fell English", serif;
     font-style: italic;
-    font-weight: 300;
+    font-weight: 400;
   }
   .hero-sub {
-    font: 400 18px/1.5 "Inter", sans-serif;
+    font: italic 400 18px/1.55 "IM Fell English", serif;
     color: var(--ink-soft);
-    max-width: 620px;
-    margin: 14px auto 0;
+    max-width: 640px;
+    margin: 20px auto 0;
   }
+  .handwriting {
+    font-family: "Caveat", cursive;
+    font-weight: 700;
+    color: var(--red-ink);
+    font-size: 1.25em;
+    transform: rotate(-2deg);
+    display: inline-block;
+  }
+
+  /* Countdown as "compass" style */
   .countdown {
     display: inline-flex;
-    gap: 28px;
-    margin-top: 36px;
-    padding: 18px 32px;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    background: var(--panel);
-    backdrop-filter: blur(8px);
+    gap: 20px;
+    margin-top: 26px;
+    padding: 12px 24px;
+    border: 2px solid var(--ink-faded);
+    border-radius: 6px;
+    background: rgba(244, 228, 184, 0.3);
+    position: relative;
   }
-  .countdown .unit {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 54px;
+  .countdown::before, .countdown::after {
+    content: "✦";
+    color: var(--red-ink);
+    font-size: 14px;
+    align-self: center;
   }
+  .countdown .unit { display: flex; flex-direction: column; align-items: center; min-width: 44px; }
   .countdown .num {
-    font-family: "Fraunces", serif;
-    font-size: 32px;
-    font-weight: 500;
-    color: var(--gold);
+    font-family: "Cinzel Decorative", serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--ink);
     line-height: 1;
   }
   .countdown .lbl {
-    font-size: 10px;
-    letter-spacing: 0.2em;
+    font-size: 9px;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--muted);
-    margin-top: 6px;
+    color: var(--ink-faded);
+    margin-top: 4px;
   }
-  .countdown .sep {
-    color: var(--border-hi);
-    font-size: 24px;
-    align-self: center;
+  .countdown .sep { color: var(--ink-faded); align-self: center; }
+
+  /* Treasure counter */
+  .treasure-bar {
+    display: inline-flex;
+    gap: 12px;
+    margin-top: 18px;
+    padding: 8px 18px;
+    border-radius: 4px;
+    border: 1px solid var(--ink-faded);
+    background: rgba(200, 138, 46, 0.1);
+    font-size: 11px;
+    color: var(--ink-soft);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    align-items: center;
+    font-family: "Cinzel Decorative", serif;
+    font-weight: 700;
   }
+  .treasure-bar .gems-inline { display: flex; gap: 4px; }
+  .treasure-bar .gems-inline svg { width: 16px; height: 16px; filter: drop-shadow(0 0 3px currentColor); }
+  .treasure-bar .count { color: var(--red-ink); font-size: 14px; }
 
   /* ==== MAP ==== */
-  main { max-width: 1200px; margin: 0 auto; padding: 0 24px 80px; }
   .map-wrap {
     position: relative;
-    border-radius: 20px;
+    border-radius: 4px;
     overflow: hidden;
-    border: 1px solid var(--border);
-    box-shadow: 0 30px 80px -20px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.02) inset;
-    margin-top: 32px;
+    border: 3px double var(--ink);
+    box-shadow: 0 10px 30px rgba(61,40,23,0.4), inset 0 0 80px rgba(138, 106, 58, 0.5);
+    margin: 20px 0;
+    isolation: isolate;
   }
   #map {
-    height: 580px;
+    height: 600px;
     width: 100%;
-    background: #0a0e14;
-    filter: saturate(0.85) contrast(1.02);
+    background: #d9bb82;
+    /* Antique treatment — sepia the whole thing */
+    filter: sepia(0.85) saturate(1.4) hue-rotate(-10deg) contrast(1.1) brightness(0.95);
   }
-  .leaflet-container { font-family: "Inter", sans-serif; }
+  .leaflet-container { background: #d9bb82; }
+  /* Edge stain */
+  .map-wrap::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    box-shadow:
+      inset 0 0 100px 30px rgba(61, 40, 23, 0.5),
+      inset 0 0 40px 10px rgba(154, 44, 30, 0.15);
+    z-index: 500;
+  }
+  /* Compass rose (SVG) */
+  .compass {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 80px;
+    height: 80px;
+    z-index: 510;
+    pointer-events: none;
+    opacity: 0.8;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+    animation: compass-spin 90s linear infinite;
+  }
+  @keyframes compass-spin { to { transform: rotate(360deg); } }
+
+  /* Popups — parchment style */
   .leaflet-popup-content-wrapper {
-    background: linear-gradient(135deg, #2a1530 0%, #1a0f1e 100%);
+    background: var(--parchment-hi);
     color: var(--ink);
-    border-radius: 14px;
-    border: 1px solid var(--border-hi);
-    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+    border-radius: 4px;
+    border: 2px double var(--ink);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
   }
-  .leaflet-popup-tip { background: #1a0f1e; }
-  .leaflet-popup-close-button { color: var(--ink) !important; }
+  .leaflet-popup-tip { background: var(--parchment-hi); border: 1px solid var(--ink); }
+  .leaflet-popup-close-button { color: var(--ink) !important; font-size: 18px !important; }
   .leaflet-popup-content {
     margin: 14px 18px;
-    font: 14px/1.5 "Inter", sans-serif;
+    font: 14px/1.5 "IM Fell English", serif;
   }
   .leaflet-popup-content h4 {
-    font-family: "Fraunces", serif;
-    font-weight: 500;
-    font-size: 18px;
-    margin: 0 0 4px;
-    color: var(--gold);
-  }
-  .leaflet-popup-content .pcity { color: var(--ink-soft); font-size: 12px; letter-spacing: 0.05em; }
-  .leaflet-popup-content .pwin { color: var(--accent); font-style: italic; margin-top: 6px; font-size: 13px; }
-
-  /* Custom pulsing marker */
-  .trip-marker { position: relative; }
-  .trip-marker .pulse {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    opacity: 0.6;
-    animation: pulse 2.4s ease-out infinite;
-    pointer-events: none;
-  }
-  .trip-marker .pin {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    font-family: "Cinzel Decorative", serif;
     font-weight: 700;
-    font-size: 14px;
-    color: #1a0f1e;
-    border: 2px solid #1a0f1e;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.5), 0 0 0 2px rgba(255, 210, 122, 0.3);
+    font-size: 16px;
+    margin: 0 0 4px;
+    color: var(--red-ink);
+    letter-spacing: 0.04em;
+  }
+  .leaflet-popup-content .pcity { color: var(--ink-faded); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .leaflet-popup-content .pwin { color: var(--gold-wax); font-style: italic; margin-top: 6px; font-size: 13px; font-weight: 600; }
+  .leaflet-popup-content .phead { font-family: "Caveat", cursive; color: var(--red-ink); font-size: 18px; margin-top: 4px; }
+
+  /* Custom map markers: X marks the spot for confirmed, circle for pending/visited */
+  .trip-marker { position: relative; width: 36px; height: 36px; }
+  .trip-marker .pin {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Cinzel Decorative", serif;
+    font-weight: 900;
+    font-size: 16px;
+    color: var(--parchment-hi);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
     transition: transform 0.2s;
     cursor: pointer;
   }
-  .trip-marker:hover .pin { transform: translate(-50%, -50%) scale(1.18); }
-  @keyframes pulse {
-    0%   { transform: translate(-50%, -50%) scale(0.6); opacity: 0.7; }
-    100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; }
+  .trip-marker .pin svg { width: 100%; height: 100%; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+  .trip-marker .pin .num {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .trip-marker:hover .pin { transform: scale(1.25); }
+  /* Pulsing ring behind confirmed X marks */
+  .trip-marker.confirmed .pulse {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--red-ink);
+    transform: translate(-50%, -50%);
+    animation: treasure-pulse 2.4s ease-out infinite;
+    pointer-events: none;
+  }
+  @keyframes treasure-pulse {
+    0%   { transform: translate(-50%,-50%) scale(0.5); opacity: 0.9; }
+    100% { transform: translate(-50%,-50%) scale(2); opacity: 0; }
   }
 
+  /* Legend */
   .legend {
     display: flex;
     gap: 22px;
     flex-wrap: wrap;
-    margin: 20px 6px 0;
-    font-size: 12px;
+    margin-top: 18px;
+    font-size: 13px;
     color: var(--ink-soft);
-    letter-spacing: 0.04em;
+    font-style: italic;
+    justify-content: center;
   }
-  .legend .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; vertical-align: middle; }
-  .legend .dot.confirmed { background: var(--confirmed); box-shadow: 0 0 8px rgba(125,216,122,0.6); }
-  .legend .dot.pending   { background: var(--pending); box-shadow: 0 0 8px rgba(255,179,102,0.6); }
-  .legend .dot.visited   { background: var(--visited); }
-  .legend .line-solid { display: inline-block; width: 24px; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-hot)); vertical-align: middle; margin-right: 8px; border-radius: 2px;}
-  .legend .line-dashed { display: inline-block; width: 24px; height: 0; border-top: 3px dashed var(--accent-cool); vertical-align: middle; margin-right: 8px;}
+  .legend .item { display: flex; align-items: center; gap: 6px; }
+  .legend svg { width: 16px; height: 16px; }
 
-  /* ==== ABOUT ==== */
+  /* ==== ABOUT SECTION ==== */
   section.about {
-    margin: 60px auto;
+    margin: 50px auto;
     max-width: 720px;
-    text-align: center;
     padding: 0 8px;
+    position: relative;
   }
   section.about h2 {
-    font-family: "Fraunces", serif;
-    font-weight: 500;
-    font-style: italic;
-    font-size: 36px;
-    color: var(--gold);
-    margin: 0 0 20px;
-    letter-spacing: -0.01em;
+    font-family: "Cinzel Decorative", serif;
+    font-weight: 700;
+    font-size: 32px;
+    color: var(--red-ink);
+    margin: 0 0 18px;
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+  section.about h2::before, section.about h2::after {
+    content: "❦";
+    color: var(--gold-wax);
+    margin: 0 16px;
+    font-size: 20px;
   }
   section.about p {
     font-size: 17px;
-    line-height: 1.7;
-    color: var(--ink-soft);
-    margin: 0 0 16px;
+    line-height: 1.75;
+    color: var(--ink);
+    margin: 0 0 14px;
+    text-align: justify;
+    hyphens: auto;
+  }
+  section.about p:first-of-type::first-letter {
+    font-family: "Cinzel Decorative", serif;
+    font-weight: 900;
+    font-size: 54px;
+    float: left;
+    line-height: 0.9;
+    padding: 6px 10px 0 0;
+    color: var(--red-ink);
   }
   section.about .sig {
-    font-family: "Fraunces", serif;
-    font-style: italic;
-    font-size: 20px;
-    color: var(--accent);
+    font-family: "Caveat", cursive;
+    font-style: normal;
+    font-size: 28px;
+    color: var(--red-ink);
     margin-top: 24px;
+    text-align: right;
+    transform: rotate(-2deg);
   }
 
-  /* ==== ITINERARY SECTION HEADING ==== */
+  /* ==== ITINERARY SECTION ==== */
   .itin-head {
     text-align: center;
-    margin: 80px 0 40px;
+    margin: 50px 0 30px;
+    position: relative;
   }
-  .itin-head .kicker { display: block; margin-bottom: 10px; }
+  .itin-head::before, .itin-head::after {
+    content: "";
+    display: inline-block;
+    width: 60px;
+    height: 1px;
+    background: var(--ink-faded);
+    vertical-align: middle;
+    margin: 0 20px;
+  }
   .itin-head h2 {
-    font-family: "Fraunces", serif;
-    font-weight: 500;
-    font-size: 42px;
+    font-family: "Cinzel Decorative", serif;
+    font-weight: 700;
+    font-size: 36px;
     margin: 0;
     color: var(--ink);
-    letter-spacing: -0.01em;
+    display: inline-block;
+    letter-spacing: 0.03em;
   }
   .itin-head h2 em {
-    font-style: italic;
-    color: var(--accent);
-    font-weight: 400;
+    font-family: "Caveat", cursive;
+    font-style: normal;
+    color: var(--red-ink);
+    font-weight: 700;
+    font-size: 1.2em;
   }
 
-  /* ==== NODE CARDS ==== */
+  /* ==== NODE CARDS (treasures) ==== */
   .nodes {
+    list-style: none;
+    padding: 0;
+    margin: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+    gap: 22px;
   }
   .node {
     position: relative;
-    padding: 28px 26px 26px;
-    border-radius: 18px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    backdrop-filter: blur(6px);
-    overflow: hidden;
-    transition: transform 0.3s cubic-bezier(.2,.8,.2,1), border-color 0.3s, background 0.3s;
+    padding: 24px 24px 22px;
+    border: 2px solid var(--ink-faded);
+    background:
+      radial-gradient(ellipse 120px 80px at 80% 20%, rgba(200, 138, 46, 0.15), transparent 70%),
+      linear-gradient(180deg, var(--parchment-hi) 0%, var(--parchment) 100%);
+    transition: transform 0.3s cubic-bezier(.2,.8,.2,1), border-color 0.3s, box-shadow 0.3s;
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(16px);
+    /* Slightly torn look */
+    clip-path: polygon(
+      0 2%,   3% 0,   8% 1%,   15% 0,   22% 1%,   30% 0,   40% 1%,
+      50% 0,  60% 1%, 70% 0,   78% 1%,  85% 0,   92% 1%,  97% 0,
+      100% 2%, 99% 10%, 100% 20%, 99% 35%, 100% 50%, 99% 65%, 100% 80%, 99% 95%,
+      97% 100%, 85% 99%, 70% 100%, 55% 99%, 40% 100%, 25% 99%, 10% 100%,
+      3% 99%,  0 97%, 1% 80%, 0 60%, 1% 40%, 0 20%
+    );
   }
-  .node.in {
-    opacity: 1;
-    transform: translateY(0);
+  .node.in { opacity: 1; transform: translateY(0); }
+  .node:hover {
+    transform: translateY(-4px) rotate(-0.3deg);
+    border-color: var(--red-ink);
+    box-shadow: 0 12px 28px rgba(61, 40, 23, 0.25);
   }
-  .node::before {
+
+  /* Wax seal in corner for confirmed */
+  .node.confirmed::after {
     content: "";
     position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at top right, var(--node-glow, rgba(255,179,102,0.08)), transparent 60%);
-    opacity: 0;
-    transition: opacity 0.4s;
-    pointer-events: none;
+    top: -8px;
+    right: 18px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 30% 30%, var(--red-ink-hi) 0%, var(--red-ink) 40%, #661a12 100%);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.4), inset -2px -2px 4px rgba(0,0,0,0.3), inset 2px 2px 4px rgba(255,150,130,0.3);
+    z-index: 2;
   }
-  .node:hover {
-    transform: translateY(-4px);
-    border-color: var(--border-hi);
-    background: var(--panel-hi);
+  .node.confirmed::before {
+    content: "✦";
+    position: absolute;
+    top: -4px;
+    right: 26px;
+    color: var(--gold-bright);
+    font-size: 14px;
+    z-index: 3;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
   }
-  .node:hover::before { opacity: 1; }
 
   .node .top {
     display: flex;
     align-items: flex-start;
     gap: 14px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
   }
   .node .n {
     flex: 0 0 auto;
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--accent-hot));
-    color: #1a0f1e;
-    font-family: "Fraunces", serif;
-    font-weight: 700;
+    background: radial-gradient(circle at 30% 30%, var(--gold-bright), var(--gold-wax) 60%, #7a5520 100%);
+    color: var(--ink);
+    font-family: "Cinzel Decorative", serif;
+    font-weight: 900;
     font-size: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px rgba(255,126,95,0.3);
+    box-shadow: 0 3px 6px rgba(61,40,23,0.4), inset -1px -1px 3px rgba(0,0,0,0.3), inset 1px 1px 3px rgba(255,240,180,0.5);
+    text-shadow: 0 1px 1px rgba(255,240,180,0.4);
   }
-  .node.confirmed .n { background: linear-gradient(135deg, var(--confirmed), #4eae5e); color: #0a1a0e; box-shadow: 0 4px 12px rgba(125,216,122,0.3); }
-  .node.visited .n { background: linear-gradient(135deg, #a89b84, #6a5f4a); color: #1a0f1e; box-shadow: none; }
 
   .node .who {
-    font-family: "Fraunces", serif;
-    font-weight: 500;
-    font-size: 22px;
-    line-height: 1.15;
+    font-family: "Cinzel Decorative", serif;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 1.2;
     color: var(--ink);
     margin: 0;
-    letter-spacing: -0.005em;
+    letter-spacing: 0.02em;
   }
   .node .city {
-    font-size: 12px;
-    letter-spacing: 0.12em;
+    font-size: 11px;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: var(--muted);
-    margin-top: 3px;
+    color: var(--ink-faded);
+    margin-top: 2px;
+    font-style: italic;
   }
 
   .node .headline {
-    font-family: "Fraunces", serif;
-    font-style: italic;
-    font-weight: 400;
-    font-size: 19px;
-    color: var(--accent);
-    margin: 4px 0 10px;
-    line-height: 1.3;
+    font-family: "Caveat", cursive;
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--red-ink);
+    margin: 8px 0 10px;
+    line-height: 1.2;
+    transform: rotate(-0.5deg);
   }
   .node .blurb {
     font-size: 14px;
     line-height: 1.6;
     color: var(--ink-soft);
-    margin: 0 0 18px;
+    margin: 0 0 14px;
+    font-style: italic;
   }
   .node .meta {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 14px;
-    border-top: 1px dashed var(--border);
-    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--ink-faded);
+    gap: 10px;
     flex-wrap: wrap;
   }
   .node .window {
     font-size: 13px;
-    color: var(--gold);
-    font-weight: 500;
+    color: var(--gold-wax);
+    font-weight: 700;
+    font-family: "IM Fell English", serif;
   }
   .node .pill {
     font-size: 10px;
-    padding: 4px 10px;
-    border-radius: 999px;
+    padding: 3px 10px;
+    border-radius: 2px;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-weight: 600;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    font-family: "Cinzel Decorative", serif;
   }
-  .node.confirmed .pill { background: rgba(125,216,122,0.15); color: var(--confirmed); border: 1px solid rgba(125,216,122,0.3); }
-  .node.pending .pill   { background: rgba(255,179,102,0.12); color: var(--pending); border: 1px solid rgba(255,179,102,0.3); }
-  .node.visited .pill   { background: rgba(168,155,132,0.12); color: var(--visited); border: 1px solid rgba(168,155,132,0.3); }
+  .node.confirmed .pill { background: var(--red-ink); color: var(--parchment-hi); }
+  .node.pending .pill   { background: var(--gold-wax); color: var(--ink); }
+  .node.visited .pill   { background: var(--ink-faded); color: var(--parchment-hi); }
 
   .node .highlight {
-    margin-top: 14px;
-    padding: 10px 14px;
-    background: rgba(255,210,122,0.06);
-    border-left: 2px solid var(--gold);
-    border-radius: 0 8px 8px 0;
+    margin-top: 12px;
+    padding: 10px 14px 10px 44px;
+    background: rgba(154, 44, 30, 0.08);
+    border-left: 3px solid var(--red-ink);
     font-size: 13px;
     color: var(--ink);
-    font-style: italic;
+    font-family: "Caveat", cursive;
+    font-weight: 700;
+    font-size: 18px;
+    position: relative;
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    transform: rotate(-0.3deg);
   }
-  .node .highlight::before {
-    content: "✦ ";
-    color: var(--gold);
-    font-style: normal;
+  .node .highlight .gem {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    filter: drop-shadow(0 0 5px currentColor);
+    animation: gem-sparkle 3s ease-in-out infinite;
   }
+  @keyframes gem-sparkle {
+    0%, 100% { filter: drop-shadow(0 0 3px currentColor) brightness(1); transform: translateY(-50%) rotate(0deg); }
+    50%      { filter: drop-shadow(0 0 8px currentColor) brightness(1.4); transform: translateY(-50%) rotate(5deg); }
+  }
+
+  /* ==== FLAMES (for launch + finale) ==== */
+  .flame-wrap {
+    position: absolute;
+    top: 14px;
+    right: 50px;  /* offset from wax seal */
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    z-index: 2;
+  }
+  .flame {
+    position: relative;
+    width: 16px;
+    height: 22px;
+    display: inline-block;
+  }
+  .flame::before, .flame::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 80%, #fff5c0 0%, #ffd27a 25%, #ff9b3d 50%, #ff5733 75%, transparent 95%);
+    border-radius: 50% 50% 40% 40% / 65% 65% 35% 35%;
+    transform-origin: 50% 85%;
+    animation: flame-flicker 0.35s ease-in-out infinite alternate;
+    filter: blur(0.3px);
+  }
+  .flame::after {
+    background: radial-gradient(ellipse at 50% 80%, #ffffff 0%, #ffe8a3 20%, #ffb347 50%, transparent 80%);
+    width: 60%;
+    left: 20%;
+    top: 25%;
+    height: 70%;
+    animation-duration: 0.22s;
+    animation-delay: 0.1s;
+  }
+  @keyframes flame-flicker {
+    0%   { transform: scaleX(1)    scaleY(1)    skewX(-2deg); opacity: 0.95; }
+    50%  { transform: scaleX(1.08) scaleY(1.08) skewX(2deg);  opacity: 1; }
+    100% { transform: scaleX(0.94) scaleY(1.12) skewX(-3deg); opacity: 0.85; }
+  }
+  .node:not(.launch):not(.finale) .flame-wrap { display: none; }
 
   /* ==== FOOTER ==== */
   footer {
     text-align: center;
-    color: var(--muted);
+    color: var(--ink-faded);
     font-size: 12px;
-    margin-top: 80px;
-    padding: 20px;
-    letter-spacing: 0.05em;
+    margin-top: 50px;
+    padding: 20px 0 10px;
+    letter-spacing: 0.08em;
+    font-style: italic;
   }
   footer .rule {
-    width: 40px;
+    width: 80px;
     height: 1px;
-    background: var(--border-hi);
-    margin: 0 auto 16px;
+    background: var(--ink-faded);
+    margin: 0 auto 14px;
+    position: relative;
   }
+  footer .rule::before, footer .rule::after {
+    content: "❦";
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold-wax);
+    font-size: 14px;
+    background: var(--parchment);
+    padding: 0 6px;
+  }
+  footer .rule::before { left: 50%; transform: translate(-50%, -50%); }
+  footer .rule::after  { display: none; }
 
   /* ==== MOBILE ==== */
-  @media (max-width: 640px) {
-    header.hero { padding: 48px 20px 32px; }
-    #map { height: 420px; }
-    .countdown { gap: 14px; padding: 14px 20px; }
-    .countdown .unit { min-width: 40px; }
-    .countdown .num { font-size: 24px; }
-    section.about h2 { font-size: 28px; }
-    .itin-head h2 { font-size: 32px; }
+  @media (max-width: 700px) {
+    .scroll-stage { padding: 20px 10px 30px; }
+    .scroll { padding: 40px 24px 50px; }
+    #map { height: 460px; }
+    .countdown { gap: 12px; padding: 10px 16px; }
+    .countdown::before, .countdown::after { display: none; }
+    .countdown .num { font-size: 20px; }
+    h1 { font-size: 40px; letter-spacing: 0; }
+    section.about h2 { font-size: 24px; }
+    section.about h2::before, section.about h2::after { margin: 0 8px; }
+    .itin-head h2 { font-size: 26px; }
+    .itin-head::before, .itin-head::after { width: 30px; margin: 0 10px; }
     .nodes { grid-template-columns: 1fr; }
+    .compass { width: 60px; height: 60px; top: 12px; right: 12px; }
   }
 </style>
 </head>
 <body>
 
-<header class="hero">
-  <div class="kicker">World Trip · Leg 1 · Spring/Summer 2026</div>
-  <h1>A road<br><em>home again</em></h1>
-  <p class="hero-sub">
-    Ten friends. Ten stops. Two thousand miles from Seattle down to San Diego,
-    then one long flight to the islands. Built around the people who shaped me.
-  </p>
-  <div class="countdown" id="countdown" aria-label="Countdown to departure">
-    <div class="unit"><span class="num" id="d">—</span><span class="lbl">days</span></div>
-    <span class="sep">·</span>
-    <div class="unit"><span class="num" id="h">—</span><span class="lbl">hours</span></div>
-    <span class="sep">·</span>
-    <div class="unit"><span class="num" id="m">—</span><span class="lbl">min</span></div>
-    <span class="sep">·</span>
-    <div class="unit"><span class="num" id="s">—</span><span class="lbl">sec</span></div>
+<!-- Hidden SVG defs: gems, markers, compass -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- Gem shape (diamond cut) -->
+    <symbol id="gem" viewBox="0 0 24 24">
+      <polygon points="12,2 22,9 18,21 6,21 2,9" fill="currentColor" stroke="rgba(0,0,0,0.5)" stroke-width="1" stroke-linejoin="round"/>
+      <polygon points="12,2 22,9 12,12 2,9" fill="rgba(255,255,255,0.45)"/>
+      <polygon points="12,2 18,9 12,8 6,9" fill="rgba(255,255,255,0.25)"/>
+      <polygon points="2,9 6,9 12,21 6,21" fill="rgba(0,0,0,0.15)"/>
+    </symbol>
+    <!-- X mark for treasure spot -->
+    <symbol id="x-mark" viewBox="0 0 36 36">
+      <circle cx="18" cy="18" r="17" fill="rgba(243,227,184,0.85)" stroke="#3d2817" stroke-width="1.5"/>
+      <path d="M 8 8 L 28 28 M 28 8 L 8 28" stroke="#9a2c1e" stroke-width="4.5" stroke-linecap="round"/>
+    </symbol>
+    <!-- Circle for pending/visited -->
+    <symbol id="dot-mark" viewBox="0 0 36 36">
+      <circle cx="18" cy="18" r="15" fill="rgba(243,227,184,0.85)" stroke="#3d2817" stroke-width="1.5" stroke-dasharray="3,2"/>
+    </symbol>
+    <!-- Compass rose -->
+    <symbol id="compass" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="46" fill="rgba(243,227,184,0.4)" stroke="#3d2817" stroke-width="1.5"/>
+      <circle cx="50" cy="50" r="36" fill="none" stroke="#3d2817" stroke-width="0.5" stroke-dasharray="2,2"/>
+      <!-- N S E W points -->
+      <polygon points="50,8 46,50 54,50" fill="#9a2c1e"/>
+      <polygon points="50,92 46,50 54,50" fill="#3d2817"/>
+      <polygon points="8,50 50,46 50,54" fill="#3d2817"/>
+      <polygon points="92,50 50,46 50,54" fill="#3d2817"/>
+      <!-- NE NW SE SW -->
+      <polygon points="79,21 54,46 50,50 50,46" fill="#7a5a38" opacity="0.7"/>
+      <polygon points="21,21 46,46 50,50 50,46" fill="#7a5a38" opacity="0.7"/>
+      <polygon points="79,79 54,54 50,50 50,54" fill="#7a5a38" opacity="0.7"/>
+      <polygon points="21,79 46,54 50,50 50,54" fill="#7a5a38" opacity="0.7"/>
+      <circle cx="50" cy="50" r="5" fill="#c88a2e" stroke="#3d2817" stroke-width="1"/>
+      <text x="50" y="16" text-anchor="middle" font-family="Cinzel Decorative, serif" font-size="9" font-weight="900" fill="#9a2c1e">N</text>
+      <text x="50" y="97" text-anchor="middle" font-family="Cinzel Decorative, serif" font-size="7" font-weight="700" fill="#3d2817">S</text>
+      <text x="95" y="53" text-anchor="middle" font-family="Cinzel Decorative, serif" font-size="7" font-weight="700" fill="#3d2817">E</text>
+      <text x="5" y="53" text-anchor="middle" font-family="Cinzel Decorative, serif" font-size="7" font-weight="700" fill="#3d2817">W</text>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="scroll-stage">
+  <div class="rod" aria-hidden="true"></div>
+  <div class="scroll">
+
+    <header class="hero">
+      <div class="kicker">❦ Ye Olde World Trip ❦ Leg I ❦ Anno MMXXVI ❦</div>
+      <h1>A Road <span class="amp">&amp;</span> A Reckoning</h1>
+      <p class="hero-sub">
+        <span class="handwriting">Ten souls.</span> Ten havens. A journey from the northern shores of Puget Sound
+        down the coast to the southern port of San Diego, and thence across the great blue to
+        the isles. Marked here in ink and sealed in wax.
+      </p>
+      <div class="countdown" id="countdown" aria-label="Countdown to departure">
+        <div class="unit"><span class="num" id="d">—</span><span class="lbl">days</span></div>
+        <div class="unit"><span class="num" id="h">—</span><span class="lbl">hours</span></div>
+        <div class="unit"><span class="num" id="m">—</span><span class="lbl">min</span></div>
+        <div class="unit"><span class="num" id="s">—</span><span class="lbl">sec</span></div>
+      </div>
+      <div><div class="treasure-bar">
+        <span>Treasures secured</span>
+        <span class="gems-inline" id="gems-inline"></span>
+        <span class="count" id="gems-count">0 / 10</span>
+      </div></div>
+    </header>
+
+    <div class="map-wrap">
+      <div id="map" role="img" aria-label="Interactive treasure map of the route"></div>
+      <svg class="compass" aria-hidden="true"><use href="#compass"/></svg>
+    </div>
+    <div class="legend">
+      <span class="item"><svg><use href="#x-mark"/></svg> X marks a date locked</span>
+      <span class="item"><svg><use href="#dot-mark"/></svg> Marking still to be set</span>
+      <span class="item">— — Charted course (by land)</span>
+      <span class="item">· · · Crossing (by air)</span>
+    </div>
+
+    <section class="about">
+      <h2>Why this journey</h2>
+      <p>After a long stretch of hard weather, I am setting out to see the people who have
+      shaped me before another season slips by. The dates are loose by design — I want each
+      of you to choose the window that fits, not the other way around.</p>
+      <p>Each stop on this chart is a chapter. <em>Your</em> chapter. If you are reading this,
+      you made the map for a reason — and I mean to make the time count.</p>
+      <div class="sig">— Robert</div>
+    </section>
+
+    <div class="itin-head">
+      <h2>Ten Chapters, <em>one story</em></h2>
+    </div>
+
+    <ol class="nodes" id="nodes"></ol>
+
+    <footer>
+      <div class="rule"></div>
+      Chart last amended <span id="updated"></span> · a private parchment, not to be posted abroad
+    </footer>
+
   </div>
-</header>
-
-<main>
-  <div class="map-wrap">
-    <div id="map" role="img" aria-label="Interactive map of the trip route"></div>
-  </div>
-  <div class="legend">
-    <span><span class="dot confirmed"></span>Date locked</span>
-    <span><span class="dot pending"></span>Flex — your call</span>
-    <span><span class="dot visited"></span>Already visited</span>
-    <span><span class="line-solid"></span>Driving route</span>
-    <span><span class="line-dashed"></span>Flight leg</span>
-  </div>
-
-  <section class="about">
-    <h2>Why I'm doing this</h2>
-    <p>
-      After a long couple of years, I'm taking the time to go see the people
-      who matter before another year slips by. The dates are loose by design —
-      I want your window to drive mine, not the other way around.
-    </p>
-    <p>
-      Each stop on this map is one chapter. Your chapter. If you're reading this,
-      you made the cut for a reason — and I want to make the time count.
-    </p>
-    <p class="sig">— Robert</p>
-  </section>
-
-  <div class="itin-head">
-    <span class="kicker">The Route</span>
-    <h2>Ten chapters, <em>one story</em></h2>
-  </div>
-
-  <ol class="nodes" id="nodes"></ol>
-
-  <footer>
-    <div class="rule"></div>
-    Last updated <span id="updated"></span> · a quiet corner of the internet, just for this trip
-  </footer>
-</main>
+</div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -500,7 +831,21 @@
   const byN = Object.fromEntries(nodes.map(n => [n.n, n]));
   document.getElementById('updated').textContent = data.updated;
 
-  // ----- countdown -----
+  // ---------- gem colors per node ----------
+  const GEM_COLORS = [
+    '#c0c0ff', // 1 Damon — moonstone
+    '#4fa8ff', // 2 Corey — sapphire
+    '#ff5733', // 3 Kie — fire opal (launch)
+    '#8b4513', // 4 Chet — amber
+    '#228b22', // 5 Eddie — emerald (family)
+    '#9a4bff', // 6 Rick — amethyst
+    '#ff69b4', // 7 Mom — rose quartz
+    '#40e0d0', // 8 Monica — turquoise
+    '#ffd700', // 9 Niema & Carlos — gold topaz
+    '#00ced1'  // 10 Adam — aquamarine (finale)
+  ];
+
+  // ---------- countdown ----------
   const target = new Date(data.departDate + 'T09:00:00-07:00').getTime();
   function tick() {
     const now = Date.now();
@@ -516,55 +861,118 @@
   }
   tick(); setInterval(tick, 1000);
 
-  // ----- map -----
+  // ---------- map ----------
   const map = L.map('map', { scrollWheelZoom: false, zoomControl: true }).setView([40.5, -122.5], 5);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+  // Use a terrain/toner-style tile that looks great under sepia
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
     maxZoom: 18,
     subdomains: 'abcd',
     attribution: '&copy; OpenStreetMap &copy; CARTO'
   }).addTo(map);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', {
-    maxZoom: 18, subdomains: 'abcd', pane: 'overlayPane'
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png', {
+    maxZoom: 18, subdomains: 'abcd', opacity: 0.55
   }).addTo(map);
 
-  const colorFor = s => s === 'confirmed' ? '#7dd87a' : s === 'visited' ? '#a89b84' : '#ffb366';
-
+  // ---------- markers ----------
   const mainlandBounds = [];
   nodes.forEach(n => {
-    const c = colorFor(n.status);
+    const confirmed = n.status === 'confirmed';
+    const iconHtml = confirmed
+      ? `<div class="pulse"></div>
+         <div class="pin"><svg><use href="#x-mark"/></svg><span class="num" style="color:var(--red-ink);">${n.n}</span></div>`
+      : `<div class="pin"><svg><use href="#dot-mark"/></svg><span class="num" style="color:var(--ink);">${n.n}</span></div>`;
     const icon = L.divIcon({
-      className: 'trip-marker',
-      html: `<div class="pulse" style="background:${c};"></div>
-             <div class="pin" style="background:${c};">${n.n}</div>`,
-      iconSize: [44, 44],
-      iconAnchor: [22, 22]
+      className: 'trip-marker ' + n.status,
+      html: iconHtml,
+      iconSize: [36, 36],
+      iconAnchor: [18, 18]
     });
     const m = L.marker([n.lat, n.lon], { icon, riseOnHover: true }).addTo(map);
-    m.bindPopup(`<h4>${n.who}</h4>
-      <div class="pcity">${n.city.toUpperCase()}</div>
-      <div style="margin-top:8px;font-style:italic;color:#ffd27a">${n.headline}</div>
+    m.bindPopup(`
+      <h4>${n.who}</h4>
+      <div class="pcity">${n.city}</div>
+      <div class="phead">${n.headline}</div>
       <div class="pwin">${n.window}</div>`);
     if (n.n !== 10) mainlandBounds.push([n.lat, n.lon]);
   });
 
-  // Drive polyline — glowing double line
+  // ---------- drive route: dashed ink line, doubled for weight ----------
   const drivePts = data.driveOrder.map(i => [byN[i].lat, byN[i].lon]);
-  L.polyline(drivePts, { color: '#ff7e5f', weight: 6, opacity: 0.25 }).addTo(map);
-  L.polyline(drivePts, { color: '#ffb366', weight: 2.5, opacity: 0.95 }).addTo(map);
+  L.polyline(drivePts, { color: '#3d2817', weight: 5, opacity: 0.35 }).addTo(map);
+  L.polyline(drivePts, {
+    color: '#9a2c1e',
+    weight: 2.2,
+    opacity: 0.95,
+    dashArray: '10, 6, 2, 6'
+  }).addTo(map);
 
-  // Flight polyline (dashed, curved would be nicer but dashed works)
-  const flightPts = data.flightLeg.map(i => [byN[i].lat, byN[i].lon]);
-  L.polyline(flightPts, { color: '#c77dff', weight: 2.5, opacity: 0.9, dashArray: '10,10' }).addTo(map);
+  // ---------- flight: bezier-ish curve approximated with intermediate points ----------
+  function curvedPath(a, b, bend) {
+    const pts = [];
+    const steps = 32;
+    const midLat = (a[0] + b[0]) / 2;
+    const midLon = (a[1] + b[1]) / 2;
+    const dLat = b[0] - a[0], dLon = b[1] - a[1];
+    // perpendicular offset
+    const len = Math.sqrt(dLat*dLat + dLon*dLon);
+    const px = -dLat / len, py = dLon / len;
+    const ctrlLat = midLat + px * bend;
+    const ctrlLon = midLon + py * bend;
+    for (let t = 0; t <= 1; t += 1/steps) {
+      const lat = (1-t)*(1-t)*a[0] + 2*(1-t)*t*ctrlLat + t*t*b[0];
+      const lon = (1-t)*(1-t)*a[1] + 2*(1-t)*t*ctrlLon + t*t*b[1];
+      pts.push([lat, lon]);
+    }
+    return pts;
+  }
+  const sd = [byN[9].lat, byN[9].lon];
+  const hi = [byN[10].lat, byN[10].lon];
+  const pdx = [byN[2].lat, byN[2].lon];
+  const flightOut = curvedPath(sd, hi, -8);      // arc up
+  const flightBack = curvedPath(hi, pdx, -6);    // arc up
+  L.polyline(flightOut, { color: '#3d2817', weight: 4, opacity: 0.25 }).addTo(map);
+  L.polyline(flightOut, { color: '#9a2c1e', weight: 1.6, opacity: 0.85, dashArray: '2, 6' }).addTo(map);
+  L.polyline(flightBack, { color: '#3d2817', weight: 4, opacity: 0.25 }).addTo(map);
+  L.polyline(flightBack, { color: '#9a2c1e', weight: 1.6, opacity: 0.85, dashArray: '2, 6' }).addTo(map);
 
-  map.fitBounds(mainlandBounds, { padding: [50, 50] });
+  // ---------- ship icon traveling along flight ----------
+  const shipIcon = L.divIcon({
+    className: 'ship-sailing',
+    html: '<div style="font-size:22px;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.6));transform:translate(-50%,-50%)">⛵</div>',
+    iconSize: [1,1], iconAnchor: [0,0]
+  });
+  const ship = L.marker(flightOut[0], { icon: shipIcon, interactive: false }).addTo(map);
+  const fullPath = flightOut.concat(flightBack);
+  let shipIdx = 0;
+  setInterval(() => {
+    shipIdx = (shipIdx + 1) % fullPath.length;
+    ship.setLatLng(fullPath[shipIdx]);
+  }, 180);
 
-  // ----- node cards -----
+  map.fitBounds(mainlandBounds, { padding: [50, 70] });
+
+  // ---------- node cards ----------
   const ol = document.getElementById('nodes');
-  nodes.forEach(n => {
+  let confirmedCount = 0;
+  nodes.forEach((n, i) => {
+    const gemColor = GEM_COLORS[i];
+    const isLaunch = n.n === 3;   // Kie — kickoff
+    const isFinale = n.n === 10;  // Adam — finale
+    const classes = ['node', n.status];
+    if (isLaunch) classes.push('launch');
+    if (isFinale) classes.push('finale');
+    if (n.status === 'confirmed') confirmedCount++;
+
     const li = document.createElement('li');
-    li.className = 'node ' + n.status;
+    li.className = classes.join(' ');
     li.id = 'node-' + n.n;
     li.innerHTML = `
+      ${(isLaunch || isFinale) ? `
+        <div class="flame-wrap" title="${isLaunch ? 'Kickoff' : 'Finale'}">
+          <span class="flame" aria-hidden="true"></span>
+          ${isFinale ? '<span class="flame" aria-hidden="true"></span>' : ''}
+        </div>
+      ` : ''}
       <div class="top">
         <div class="n">${n.n}</div>
         <div>
@@ -574,21 +982,39 @@
       </div>
       <div class="headline">${n.headline}</div>
       <p class="blurb">${n.blurb}</p>
-      <div class="highlight">${n.highlight}</div>
+      <div class="highlight" style="color:${gemColor}">
+        <svg class="gem" aria-hidden="true"><use href="#gem"/></svg>
+        <span style="color:var(--ink);">${n.highlight}</span>
+      </div>
       <div class="meta">
         <span class="window">${n.window}</span>
-        <span class="pill">${n.status === 'confirmed' ? 'Date locked' : n.status === 'visited' ? 'Already visited' : 'Your call'}</span>
+        <span class="pill">${n.status === 'confirmed' ? 'Date Locked' : n.status === 'visited' ? 'Visited' : 'Your Call'}</span>
       </div>`;
     ol.appendChild(li);
   });
 
-  // Scroll-reveal
+  // Treasure counter in hero
+  document.getElementById('gems-count').textContent = `${confirmedCount} / 10`;
+  const gemsInline = document.getElementById('gems-inline');
+  nodes.forEach((n, i) => {
+    if (n.status === 'confirmed') {
+      const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      s.setAttribute('viewBox', '0 0 24 24');
+      s.style.color = GEM_COLORS[i];
+      s.innerHTML = '<use href="#gem"/>';
+      gemsInline.appendChild(s);
+    }
+  });
+
+  // Scroll-reveal for nodes (after unfurl)
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }});
   }, { threshold: 0.12 });
-  document.querySelectorAll('.node').forEach((el, i) => {
-    setTimeout(() => io.observe(el), i * 40);
-  });
+  setTimeout(() => {
+    document.querySelectorAll('.node').forEach((el, i) => {
+      setTimeout(() => io.observe(el), i * 60);
+    });
+  }, 2200);
 })();
 </script>
 </body>
