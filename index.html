@@ -321,6 +321,10 @@
   .leaflet-popup-content .pwin { color: var(--gold-wax); font-style: italic; margin-top: 6px; font-size: 13px; font-weight: 600; }
   .leaflet-popup-content .phead { font-family: "Caveat", cursive; color: var(--red-ink); font-size: 18px; margin-top: 4px; }
 
+  /* Side-trip marker — a smaller, dashed sun icon, no pulse, muted color */
+  .side-marker { width: 28px; height: 28px; position: relative; }
+  .side-marker svg { width: 100%; height: 100%; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5)); opacity: 0.9; }
+
   /* Custom map markers: X marks the spot for confirmed, circle for pending/visited */
   .trip-marker { position: relative; width: 36px; height: 36px; }
   .trip-marker .pin {
@@ -738,6 +742,22 @@
     <symbol id="dot-mark" viewBox="0 0 36 36">
       <circle cx="18" cy="18" r="15" fill="rgba(243,227,184,0.85)" stroke="#3d2817" stroke-width="1.5" stroke-dasharray="3,2"/>
     </symbol>
+    <!-- Sun/cactus for side trips -->
+    <symbol id="side-sun" viewBox="0 0 32 32">
+      <!-- rays -->
+      <g stroke="#9a2c1e" stroke-width="1.4" stroke-linecap="round" fill="none" opacity="0.7">
+        <line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="16" y1="26" x2="16" y2="30"/>
+        <line x1="2" y1="16" x2="6" y2="16"/>
+        <line x1="26" y1="16" x2="30" y2="16"/>
+        <line x1="6" y1="6" x2="9" y2="9"/>
+        <line x1="23" y1="23" x2="26" y2="26"/>
+        <line x1="26" y1="6" x2="23" y2="9"/>
+        <line x1="9" y1="23" x2="6" y2="26"/>
+      </g>
+      <circle cx="16" cy="16" r="8" fill="#e8b84c" stroke="#7a5520" stroke-width="1.5"/>
+      <circle cx="16" cy="16" r="3" fill="#9a2c1e" opacity="0.4"/>
+    </symbol>
     <!-- Compass rose -->
     <symbol id="compass" viewBox="0 0 100 100">
       <circle cx="50" cy="50" r="46" fill="rgba(243,227,184,0.4)" stroke="#3d2817" stroke-width="1.5"/>
@@ -795,6 +815,7 @@
       <span class="item"><svg><use href="#dot-mark"/></svg> Marking still to be set</span>
       <span class="item">— — Charted course (by land)</span>
       <span class="item">· · · Crossing (by air)</span>
+      <span class="item"><svg><use href="#side-sun"/></svg> Side excursion</span>
     </div>
 
     <section class="about">
@@ -948,6 +969,30 @@
     shipIdx = (shipIdx + 1) % fullPath.length;
     ship.setLatLng(fullPath[shipIdx]);
   }, 180);
+
+  // ---------- side trips (not jewels — just fine detours) ----------
+  (data.sideTrips || []).forEach(st => {
+    // Dashed detour line from the host node to the side trip
+    const host = byN[st.withNode];
+    if (host) {
+      L.polyline([[host.lat, host.lon], [st.lat, st.lon]], {
+        color: '#7a5a38', weight: 1.5, opacity: 0.7,
+        dashArray: '3, 5'
+      }).addTo(map);
+    }
+    const icon = L.divIcon({
+      className: 'side-marker',
+      html: `<svg viewBox="0 0 32 32"><use href="#side-sun"/></svg>`,
+      iconSize: [28, 28],
+      iconAnchor: [14, 14]
+    });
+    const m = L.marker([st.lat, st.lon], { icon, riseOnHover: true }).addTo(map);
+    m.bindPopup(`
+      <h4 style="color:#c88a2e">${st.name}</h4>
+      <div class="pcity">${st.subtitle}</div>
+      <div class="phead" style="color:#3d2817;font-size:15px;margin-top:8px;">${st.note}</div>`);
+    mainlandBounds.push([st.lat, st.lon]);
+  });
 
   map.fitBounds(mainlandBounds, { padding: [50, 70] });
 

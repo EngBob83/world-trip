@@ -125,5 +125,15 @@
     }
   ],
   "driveOrder": [2, 3, 4, 5, 6, 7, 8, 9],
-  "flightLeg": [9, 10, 2]
+  "flightLeg": [9, 10, 2],
+  "sideTrips": [
+    {
+      "name": "Joshua Tree",
+      "subtitle": "National Park & desert detour",
+      "lat": 33.8734,
+      "lon": -115.9010,
+      "withNode": 8,
+      "note": "A side adventure with Monica — her properties out there, the park, and open desert. Not a jewel on the chart, but a fine stretch of the road."
+    }
+  ]
 }
