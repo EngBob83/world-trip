@@ -1,4 +1,4 @@
 contacts.md
-emails/*.draft.md
+emails/
 node_modules/
 .wrangler/
