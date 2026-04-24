@@ -318,7 +318,7 @@
   .leaflet-popup-content .phead { font-family: "Caveat", cursive; color: var(--red-ink); font-size: 18px; margin-top: 4px; }
 
   /* Side-trip marker — majestic Joshua tree with a subtle pulse-glow */
-  .side-marker { width: 44px; height: 52px; position: relative; }
+  .side-marker { width: 44px; height: 52px; }  /* leave Leaflet's absolute positioning */
   .side-marker svg {
     width: 100%;
     height: 100%;
@@ -332,7 +332,7 @@
   }
 
   /* Custom map markers: X marks the spot for confirmed, circle for pending/visited */
-  .trip-marker { position: relative; width: 36px; height: 36px; }
+  .trip-marker { width: 36px; height: 36px; }  /* leave Leaflet's absolute positioning in place */
   .trip-marker .pin {
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
@@ -907,6 +907,18 @@
     document.getElementById('s').textContent = String(s).padStart(2,'0');
   }
   tick(); setInterval(tick, 1000);
+
+  // ---------- wait for the scroll unfurl to complete before initializing the map ----------
+  // (Leaflet caches container size at init; if the scroll's clip-path/animation is still
+  //  running, marker positions get baked in wrong.)
+  await new Promise(resolve => {
+    const scroll = document.querySelector('.scroll');
+    if (!scroll) return resolve();
+    let done = false;
+    const finish = () => { if (!done) { done = true; resolve(); } };
+    scroll.addEventListener('animationend', finish, { once: true });
+    setTimeout(finish, 2400); // fallback
+  });
 
   // ---------- map ----------
   const map = L.map('map', { scrollWheelZoom: false, zoomControl: true }).setView([40.5, -122.5], 5);
