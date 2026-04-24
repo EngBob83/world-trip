@@ -321,9 +321,19 @@
   .leaflet-popup-content .pwin { color: var(--gold-wax); font-style: italic; margin-top: 6px; font-size: 13px; font-weight: 600; }
   .leaflet-popup-content .phead { font-family: "Caveat", cursive; color: var(--red-ink); font-size: 18px; margin-top: 4px; }
 
-  /* Side-trip marker — a smaller, dashed sun icon, no pulse, muted color */
-  .side-marker { width: 28px; height: 28px; position: relative; }
-  .side-marker svg { width: 100%; height: 100%; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5)); opacity: 0.9; }
+  /* Side-trip marker — majestic Joshua tree with a subtle pulse-glow */
+  .side-marker { width: 44px; height: 52px; position: relative; }
+  .side-marker svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)) drop-shadow(0 0 6px rgba(232, 184, 76, 0.4));
+    animation: jt-sway 5s ease-in-out infinite alternate;
+    transform-origin: 50% 100%;
+  }
+  @keyframes jt-sway {
+    0%   { transform: rotate(-1.5deg); }
+    100% { transform: rotate(1.5deg); }
+  }
 
   /* Custom map markers: X marks the spot for confirmed, circle for pending/visited */
   .trip-marker { position: relative; width: 36px; height: 36px; }
@@ -742,21 +752,43 @@
     <symbol id="dot-mark" viewBox="0 0 36 36">
       <circle cx="18" cy="18" r="15" fill="rgba(243,227,184,0.85)" stroke="#3d2817" stroke-width="1.5" stroke-dasharray="3,2"/>
     </symbol>
-    <!-- Sun/cactus for side trips -->
-    <symbol id="side-sun" viewBox="0 0 32 32">
-      <!-- rays -->
-      <g stroke="#9a2c1e" stroke-width="1.4" stroke-linecap="round" fill="none" opacity="0.7">
-        <line x1="16" y1="2" x2="16" y2="6"/>
-        <line x1="16" y1="26" x2="16" y2="30"/>
-        <line x1="2" y1="16" x2="6" y2="16"/>
-        <line x1="26" y1="16" x2="30" y2="16"/>
-        <line x1="6" y1="6" x2="9" y2="9"/>
-        <line x1="23" y1="23" x2="26" y2="26"/>
-        <line x1="26" y1="6" x2="23" y2="9"/>
-        <line x1="9" y1="23" x2="6" y2="26"/>
+    <!-- Joshua tree for side trip — woodcut silhouette with a golden aura -->
+    <symbol id="joshua-tree" viewBox="0 0 40 48">
+      <!-- Aura / halo -->
+      <defs>
+        <radialGradient id="jt-aura" cx="50%" cy="55%" r="55%">
+          <stop offset="0%"  stop-color="#ffd27a" stop-opacity="0.85"/>
+          <stop offset="45%" stop-color="#e8b84c" stop-opacity="0.35"/>
+          <stop offset="100%" stop-color="#e8b84c" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <circle cx="20" cy="26" r="20" fill="url(#jt-aura)"/>
+      <!-- Tree silhouette: trunk + forked branches -->
+      <g fill="#3d2817" stroke="#1a0f0a" stroke-width="0.6" stroke-linejoin="round">
+        <!-- Trunk -->
+        <path d="M 18 46 L 17 36 L 16 28 L 17 20 L 19 14 L 21 14 L 23 20 L 24 28 L 23 36 L 22 46 Z"/>
+        <!-- Left branch -->
+        <path d="M 17 24 L 12 21 L 8 17 L 6 12 L 7 10 L 10 13 L 13 16 L 17 19 Z"/>
+        <!-- Right branch -->
+        <path d="M 23 26 L 28 22 L 32 17 L 34 13 L 33 11 L 30 14 L 27 18 L 23 21 Z"/>
+        <!-- Right-lower branch -->
+        <path d="M 23 32 L 27 31 L 30 29 L 31 27 L 29 27 L 26 28 L 23 30 Z"/>
+        <!-- Small left mid-branch -->
+        <path d="M 17 30 L 14 30 L 11 28 L 12 31 L 15 32 L 17 32 Z"/>
       </g>
-      <circle cx="16" cy="16" r="8" fill="#e8b84c" stroke="#7a5520" stroke-width="1.5"/>
-      <circle cx="16" cy="16" r="3" fill="#9a2c1e" opacity="0.4"/>
+      <!-- Spiky tufts at each branch tip -->
+      <g fill="#2a5a2a" stroke="#1a3a1a" stroke-width="0.4">
+        <!-- Top -->
+        <path d="M 20 8 L 18 2 L 17 6 L 15 3 L 16 8 L 13 6 L 16 10 L 13 10 L 17 12 L 20 10 L 23 12 L 27 10 L 24 10 L 27 6 L 24 8 L 25 3 L 23 6 L 22 2 Z"/>
+        <!-- Left branch tip -->
+        <path d="M 6 10 L 3 6 L 4 10 L 1 9 L 4 12 L 2 14 L 6 13 L 6 16 L 8 12 L 10 14 L 10 10 L 12 8 L 9 9 L 10 6 L 7 8 Z"/>
+        <!-- Right branch tip -->
+        <path d="M 34 10 L 37 6 L 36 10 L 39 9 L 36 12 L 38 14 L 34 13 L 34 16 L 32 12 L 30 14 L 30 10 L 28 8 L 31 9 L 30 6 L 33 8 Z"/>
+        <!-- Right-lower tip -->
+        <path d="M 31 26 L 33 23 L 34 27 L 36 25 L 35 29 L 32 30 L 29 29 L 30 25 Z"/>
+        <!-- Mid-left tip -->
+        <path d="M 11 27 L 9 25 L 10 29 L 7 27 L 9 31 L 12 31 L 14 29 L 12 26 Z"/>
+      </g>
     </symbol>
     <!-- Compass rose -->
     <symbol id="compass" viewBox="0 0 100 100">
@@ -815,7 +847,7 @@
       <span class="item"><svg><use href="#dot-mark"/></svg> Marking still to be set</span>
       <span class="item">— — Charted course (by land)</span>
       <span class="item">· · · Crossing (by air)</span>
-      <span class="item"><svg><use href="#side-sun"/></svg> Side excursion</span>
+      <span class="item"><svg><use href="#joshua-tree"/></svg> Side excursion</span>
     </div>
 
     <section class="about">
@@ -982,9 +1014,9 @@
     }
     const icon = L.divIcon({
       className: 'side-marker',
-      html: `<svg viewBox="0 0 32 32"><use href="#side-sun"/></svg>`,
-      iconSize: [28, 28],
-      iconAnchor: [14, 14]
+      html: `<svg viewBox="0 0 40 48"><use href="#joshua-tree"/></svg>`,
+      iconSize: [44, 52],
+      iconAnchor: [22, 48]
     });
     const m = L.marker([st.lat, st.lon], { icon, riseOnHover: true }).addTo(map);
     m.bindPopup(`
