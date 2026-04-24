@@ -1,18 +1,129 @@
 {
   "updated": "2026-04-24",
   "startCity": "Aloha, OR",
+  "departDate": "2026-05-01",
   "nodes": [
-    { "n": 1,  "who": "Damon E.",            "city": "Seattle, WA",        "lat": 47.6062, "lon": -122.3321, "window": "Already visited (optional revisit)", "status": "visited" },
-    { "n": 2,  "who": "Corey & Carol M.",    "city": "Beaverton/Aloha, OR","lat": 45.4912, "lon": -122.8756, "window": "Already visited (may revisit)",      "status": "visited" },
-    { "n": 3,  "who": "Kie C.",              "city": "Amity, OR",          "lat": 45.1162, "lon": -123.2068, "window": "May 1 – 3, 2026",                     "status": "confirmed" },
-    { "n": 4,  "who": "Chet F.",             "city": "Roseburg, OR",       "lat": 43.2165, "lon": -123.3417, "window": "Starting May 3 — dates TBD",          "status": "pending" },
-    { "n": 5,  "who": "Eddie C. & family",   "city": "Grants Pass, OR",    "lat": 42.4390, "lon": -123.3284, "window": "TBD",                                 "status": "pending" },
-    { "n": 6,  "who": "Rick S.",             "city": "Murphy, OR",         "lat": 42.3473, "lon": -123.3342, "window": "TBD",                                 "status": "pending" },
-    { "n": 7,  "who": "Mom & Jim B.",        "city": "Healdsburg, CA",     "lat": 38.6102, "lon": -122.8694, "window": "TBD",                                 "status": "pending" },
-    { "n": 8,  "who": "Monica S.",           "city": "Sebastopol, CA",     "lat": 38.4021, "lon": -122.8239, "window": "May 22, 2026 → TBD",                  "status": "confirmed" },
-    { "n": 9,  "who": "Niema K. & Carlos A.","city": "San Diego, CA",      "lat": 32.7157, "lon": -117.1611, "window": "TBD",                                 "status": "pending" },
-    { "n": 10, "who": "Adam S.",             "city": "Honolulu, HI",       "lat": 21.3069, "lon": -157.8583, "window": "TBD (fly from SAN)",                  "status": "pending" }
+    {
+      "n": 1,
+      "who": "Damon & Jacquelyn",
+      "city": "Seattle, WA",
+      "lat": 47.6062,
+      "lon": -122.3321,
+      "window": "Already visited (maybe again)",
+      "status": "visited",
+      "headline": "The prologue",
+      "blurb": "The old Seattle crew, Teddy and James, and the visit that planted the seed for this whole trip. A second swing through on the return leg isn't off the table.",
+      "highlight": "Hopefully round two"
+    },
+    {
+      "n": 2,
+      "who": "Corey & Carol",
+      "city": "Beaverton / Aloha, OR",
+      "lat": 45.4912,
+      "lon": -122.8756,
+      "window": "Hometown drop-in",
+      "status": "visited",
+      "headline": "The hometown check-in",
+      "blurb": "You guys are literally on the way — so whether it's a beer on the way out or a long-story dinner on the way back, I'm not passing through without seeing you.",
+      "highlight": "Easy — backyard, beer, and drone stories"
+    },
+    {
+      "n": 3,
+      "who": "Kie",
+      "city": "Amity, OR",
+      "lat": 45.1162,
+      "lon": -123.2068,
+      "window": "May 1 – 3, 2026",
+      "status": "confirmed",
+      "headline": "The launch pad",
+      "blurb": "Where Leg 1 officially lifts off. May 1st I'm rolling into Amity and pointing the car south. First stop, first memory, first real proof this trip is happening.",
+      "highlight": "Kicking Leg 1 off properly"
+    },
+    {
+      "n": 4,
+      "who": "Chet",
+      "city": "Roseburg, OR",
+      "lat": 43.2165,
+      "lon": -123.3417,
+      "window": "Early-to-mid May — pick a day",
+      "status": "pending",
+      "headline": "An old road, an older friend",
+      "blurb": "I-5 doesn't get driven without a Roseburg stop. Whatever window works — an afternoon beer, a dinner, a couple nights on the couch — I'm in.",
+      "highlight": "Long-overdue catch-up"
+    },
+    {
+      "n": 5,
+      "who": "Eddie & family",
+      "city": "Grants Pass, OR",
+      "lat": 42.4390,
+      "lon": -123.3284,
+      "window": "Mid May — your call",
+      "status": "pending",
+      "headline": "Family time",
+      "blurb": "Been way too long. Whether it's a quick pass-through meal or a proper weekend with the whole crew, I'd love to meet the family proper and hear how everyone's doing.",
+      "highlight": "Meeting the whole family"
+    },
+    {
+      "n": 6,
+      "who": "Rick",
+      "city": "Murphy, OR",
+      "lat": 42.3473,
+      "lon": -123.3342,
+      "window": "Mid May — flex",
+      "status": "pending",
+      "headline": "Off the beaten path",
+      "blurb": "Murphy's a hidden corner of southern Oregon that most people never see, and that's exactly why I want to see it with you. Show me what's good.",
+      "highlight": "Seeing Murphy through your eyes"
+    },
+    {
+      "n": 7,
+      "who": "Mom & Jim",
+      "city": "Healdsburg, CA",
+      "lat": 38.6102,
+      "lon": -122.8694,
+      "window": "Mid-to-late May",
+      "status": "pending",
+      "headline": "Homecoming",
+      "blurb": "Wine country, slow mornings, Mom's kitchen, Jim's stories. Taking this stop at half speed on purpose — it's a recharge, not a checkbox.",
+      "highlight": "Slow mornings with Mom & Jim"
+    },
+    {
+      "n": 8,
+      "who": "Monica",
+      "city": "Sebastopol, CA",
+      "lat": 38.4021,
+      "lon": -122.8239,
+      "window": "May 22 → TBD",
+      "status": "confirmed",
+      "headline": "Midpoint magic",
+      "blurb": "May 22, the halfway pin. Sonoma County in late spring is unreasonably good, and you always know the best spots. Hiking, wineries, long conversations.",
+      "highlight": "Sonoma in late spring"
+    },
+    {
+      "n": 9,
+      "who": "Niema & Carlos",
+      "city": "San Diego, CA",
+      "lat": 32.7157,
+      "lon": -117.1611,
+      "window": "Late May / early June",
+      "status": "pending",
+      "headline": "The southern anchor",
+      "blurb": "The last stop on the mainland — sunshine, tacos, the ocean, and you two. Also the launching point for the flight out to see Adam. Let's make it count.",
+      "highlight": "Tacos and ocean before the flight"
+    },
+    {
+      "n": 10,
+      "who": "Adam",
+      "city": "Honolulu, HI",
+      "lat": 21.3069,
+      "lon": -157.8583,
+      "window": "June (TBD — post-SAN)",
+      "status": "pending",
+      "headline": "The ocean finale",
+      "blurb": "Last node. Fly out of San Diego, land in paradise, owe you about a decade of catch-up. Surf, sunset, and a proper finish to Leg 1.",
+      "highlight": "Finishing where the water starts"
+    }
   ],
   "driveOrder": [2, 3, 4, 5, 6, 7, 8, 9],
-  "flightLeg":  [9, 10, 2]
+  "flightLeg": [9, 10, 2]
 }

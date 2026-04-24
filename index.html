@@ -5,92 +5,488 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="robots" content="noindex, nofollow" />
 <title>World Trip — Leg 1: Reconnection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <style>
   :root {
-    --bg: #0d1117;
-    --panel: #161b22;
-    --ink: #e6edf3;
-    --muted: #8b949e;
-    --accent: #f7a13b;
-    --accent-2: #58a6ff;
-    --confirmed: #3fb950;
-    --pending: #d29922;
-    --visited: #8b949e;
+    --ink: #f4e9d8;
+    --ink-soft: #c9b89a;
+    --muted: #8a7a63;
+    --bg-0: #1a0f1e;
+    --bg-1: #2a1530;
+    --bg-2: #3d1d34;
+    --panel: rgba(255, 245, 225, 0.05);
+    --panel-hi: rgba(255, 245, 225, 0.09);
+    --border: rgba(247, 185, 119, 0.18);
+    --border-hi: rgba(247, 185, 119, 0.4);
+    --accent: #ffb366;
+    --accent-hot: #ff7e5f;
+    --accent-cool: #c77dff;
+    --gold: #ffd27a;
+    --confirmed: #7dd87a;
+    --pending: #ffb366;
+    --visited: #a89b84;
   }
   * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
-    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-  header { padding: 28px 24px 10px; max-width: 1100px; margin: 0 auto; }
-  h1 { margin: 0 0 6px; font-size: 28px; letter-spacing: -0.01em; }
-  .tagline { color: var(--muted); margin: 0 0 18px; }
-  main { max-width: 1100px; margin: 0 auto; padding: 0 24px 48px; }
-  #map { height: 560px; width: 100%; border-radius: 12px; border: 1px solid #30363d;
-         background: #0a0e14; }
-  .legend { display: flex; gap: 18px; flex-wrap: wrap; margin: 12px 0 22px; font-size: 13px; color: var(--muted); }
-  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
-  .dot.confirmed { background: var(--confirmed); }
-  .dot.pending   { background: var(--pending); }
-  .dot.visited   { background: var(--visited); }
-  .line-solid { display: inline-block; width: 22px; height: 3px; background: var(--accent); vertical-align: middle; margin-right: 6px; border-radius: 2px;}
-  .line-dashed { display: inline-block; width: 22px; height: 0; border-top: 3px dashed var(--accent-2); vertical-align: middle; margin-right: 6px;}
-  section.about { background: var(--panel); border: 1px solid #30363d; border-radius: 12px; padding: 18px 22px; margin: 24px 0; }
-  section.about h2 { margin-top: 0; font-size: 18px; }
-  h2.itin { margin: 32px 0 10px; font-size: 20px; }
-  ol.itinerary { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
-  ol.itinerary li { background: var(--panel); border: 1px solid #30363d; border-radius: 10px;
-    padding: 14px 18px; display: grid; grid-template-columns: 36px 1fr auto; gap: 12px; align-items: center; }
-  ol.itinerary .num { font-weight: 700; color: var(--accent); font-size: 18px; }
-  ol.itinerary .who { font-weight: 600; }
-  ol.itinerary .city { color: var(--muted); font-size: 13px; }
-  ol.itinerary .win { color: var(--ink); font-size: 13px; text-align: right; }
-  .status-pill { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px;
-    margin-left: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
-  .status-pill.confirmed { background: rgba(63,185,80,.15); color: var(--confirmed); }
-  .status-pill.pending   { background: rgba(210,153,34,.15); color: var(--pending); }
-  .status-pill.visited   { background: rgba(139,148,158,.15); color: var(--visited); }
-  footer { color: var(--muted); font-size: 12px; margin-top: 36px; text-align: center; }
-  @media (max-width: 640px) {
-    #map { height: 380px; }
-    ol.itinerary li { grid-template-columns: 28px 1fr; grid-template-rows: auto auto; }
-    ol.itinerary .win { grid-column: 1 / -1; text-align: left; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    color: var(--ink);
+    font: 16px/1.6 "Inter", -apple-system, system-ui, sans-serif;
+    background:
+      radial-gradient(ellipse 1200px 800px at 20% 0%, rgba(255, 126, 95, 0.15), transparent 60%),
+      radial-gradient(ellipse 900px 700px at 90% 30%, rgba(199, 125, 255, 0.12), transparent 55%),
+      radial-gradient(ellipse 1000px 600px at 50% 100%, rgba(255, 210, 122, 0.08), transparent 60%),
+      linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 40%, var(--bg-2) 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    overflow-x: hidden;
   }
-  .leaflet-popup-content { font: 14px/1.4 -apple-system, sans-serif; }
-  .leaflet-popup-content strong { color: #111; }
+  a { color: var(--gold); }
+
+  /* ==== HERO ==== */
+  header.hero {
+    padding: 72px 24px 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+  }
+  .kicker {
+    font: 600 11px/1 "Inter", sans-serif;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    opacity: 0.85;
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 500;
+    font-variation-settings: "opsz" 144, "SOFT" 50;
+    font-size: clamp(44px, 8vw, 96px);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin: 0 0 4px;
+    background: linear-gradient(135deg, #fff5e0 0%, var(--accent) 40%, var(--accent-hot) 70%, var(--accent-cool) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  h1 em {
+    font-style: italic;
+    font-weight: 300;
+  }
+  .hero-sub {
+    font: 400 18px/1.5 "Inter", sans-serif;
+    color: var(--ink-soft);
+    max-width: 620px;
+    margin: 14px auto 0;
+  }
+  .countdown {
+    display: inline-flex;
+    gap: 28px;
+    margin-top: 36px;
+    padding: 18px 32px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--panel);
+    backdrop-filter: blur(8px);
+  }
+  .countdown .unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 54px;
+  }
+  .countdown .num {
+    font-family: "Fraunces", serif;
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .countdown .lbl {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+  .countdown .sep {
+    color: var(--border-hi);
+    font-size: 24px;
+    align-self: center;
+  }
+
+  /* ==== MAP ==== */
+  main { max-width: 1200px; margin: 0 auto; padding: 0 24px 80px; }
+  .map-wrap {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 30px 80px -20px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.02) inset;
+    margin-top: 32px;
+  }
+  #map {
+    height: 580px;
+    width: 100%;
+    background: #0a0e14;
+    filter: saturate(0.85) contrast(1.02);
+  }
+  .leaflet-container { font-family: "Inter", sans-serif; }
+  .leaflet-popup-content-wrapper {
+    background: linear-gradient(135deg, #2a1530 0%, #1a0f1e 100%);
+    color: var(--ink);
+    border-radius: 14px;
+    border: 1px solid var(--border-hi);
+    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+  }
+  .leaflet-popup-tip { background: #1a0f1e; }
+  .leaflet-popup-close-button { color: var(--ink) !important; }
+  .leaflet-popup-content {
+    margin: 14px 18px;
+    font: 14px/1.5 "Inter", sans-serif;
+  }
+  .leaflet-popup-content h4 {
+    font-family: "Fraunces", serif;
+    font-weight: 500;
+    font-size: 18px;
+    margin: 0 0 4px;
+    color: var(--gold);
+  }
+  .leaflet-popup-content .pcity { color: var(--ink-soft); font-size: 12px; letter-spacing: 0.05em; }
+  .leaflet-popup-content .pwin { color: var(--accent); font-style: italic; margin-top: 6px; font-size: 13px; }
+
+  /* Custom pulsing marker */
+  .trip-marker { position: relative; }
+  .trip-marker .pulse {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    opacity: 0.6;
+    animation: pulse 2.4s ease-out infinite;
+    pointer-events: none;
+  }
+  .trip-marker .pin {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    color: #1a0f1e;
+    border: 2px solid #1a0f1e;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5), 0 0 0 2px rgba(255, 210, 122, 0.3);
+    transition: transform 0.2s;
+    cursor: pointer;
+  }
+  .trip-marker:hover .pin { transform: translate(-50%, -50%) scale(1.18); }
+  @keyframes pulse {
+    0%   { transform: translate(-50%, -50%) scale(0.6); opacity: 0.7; }
+    100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; }
+  }
+
+  .legend {
+    display: flex;
+    gap: 22px;
+    flex-wrap: wrap;
+    margin: 20px 6px 0;
+    font-size: 12px;
+    color: var(--ink-soft);
+    letter-spacing: 0.04em;
+  }
+  .legend .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; vertical-align: middle; }
+  .legend .dot.confirmed { background: var(--confirmed); box-shadow: 0 0 8px rgba(125,216,122,0.6); }
+  .legend .dot.pending   { background: var(--pending); box-shadow: 0 0 8px rgba(255,179,102,0.6); }
+  .legend .dot.visited   { background: var(--visited); }
+  .legend .line-solid { display: inline-block; width: 24px; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-hot)); vertical-align: middle; margin-right: 8px; border-radius: 2px;}
+  .legend .line-dashed { display: inline-block; width: 24px; height: 0; border-top: 3px dashed var(--accent-cool); vertical-align: middle; margin-right: 8px;}
+
+  /* ==== ABOUT ==== */
+  section.about {
+    margin: 60px auto;
+    max-width: 720px;
+    text-align: center;
+    padding: 0 8px;
+  }
+  section.about h2 {
+    font-family: "Fraunces", serif;
+    font-weight: 500;
+    font-style: italic;
+    font-size: 36px;
+    color: var(--gold);
+    margin: 0 0 20px;
+    letter-spacing: -0.01em;
+  }
+  section.about p {
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    margin: 0 0 16px;
+  }
+  section.about .sig {
+    font-family: "Fraunces", serif;
+    font-style: italic;
+    font-size: 20px;
+    color: var(--accent);
+    margin-top: 24px;
+  }
+
+  /* ==== ITINERARY SECTION HEADING ==== */
+  .itin-head {
+    text-align: center;
+    margin: 80px 0 40px;
+  }
+  .itin-head .kicker { display: block; margin-bottom: 10px; }
+  .itin-head h2 {
+    font-family: "Fraunces", serif;
+    font-weight: 500;
+    font-size: 42px;
+    margin: 0;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .itin-head h2 em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 400;
+  }
+
+  /* ==== NODE CARDS ==== */
+  .nodes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+  }
+  .node {
+    position: relative;
+    padding: 28px 26px 26px;
+    border-radius: 18px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(6px);
+    overflow: hidden;
+    transition: transform 0.3s cubic-bezier(.2,.8,.2,1), border-color 0.3s, background 0.3s;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .node.in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .node::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right, var(--node-glow, rgba(255,179,102,0.08)), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+  }
+  .node:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-hi);
+    background: var(--panel-hi);
+  }
+  .node:hover::before { opacity: 1; }
+
+  .node .top {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .node .n {
+    flex: 0 0 auto;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-hot));
+    color: #1a0f1e;
+    font-family: "Fraunces", serif;
+    font-weight: 700;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(255,126,95,0.3);
+  }
+  .node.confirmed .n { background: linear-gradient(135deg, var(--confirmed), #4eae5e); color: #0a1a0e; box-shadow: 0 4px 12px rgba(125,216,122,0.3); }
+  .node.visited .n { background: linear-gradient(135deg, #a89b84, #6a5f4a); color: #1a0f1e; box-shadow: none; }
+
+  .node .who {
+    font-family: "Fraunces", serif;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 1.15;
+    color: var(--ink);
+    margin: 0;
+    letter-spacing: -0.005em;
+  }
+  .node .city {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  .node .headline {
+    font-family: "Fraunces", serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 19px;
+    color: var(--accent);
+    margin: 4px 0 10px;
+    line-height: 1.3;
+  }
+  .node .blurb {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin: 0 0 18px;
+  }
+  .node .meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border);
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .node .window {
+    font-size: 13px;
+    color: var(--gold);
+    font-weight: 500;
+  }
+  .node .pill {
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+  }
+  .node.confirmed .pill { background: rgba(125,216,122,0.15); color: var(--confirmed); border: 1px solid rgba(125,216,122,0.3); }
+  .node.pending .pill   { background: rgba(255,179,102,0.12); color: var(--pending); border: 1px solid rgba(255,179,102,0.3); }
+  .node.visited .pill   { background: rgba(168,155,132,0.12); color: var(--visited); border: 1px solid rgba(168,155,132,0.3); }
+
+  .node .highlight {
+    margin-top: 14px;
+    padding: 10px 14px;
+    background: rgba(255,210,122,0.06);
+    border-left: 2px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+    font-size: 13px;
+    color: var(--ink);
+    font-style: italic;
+  }
+  .node .highlight::before {
+    content: "✦ ";
+    color: var(--gold);
+    font-style: normal;
+  }
+
+  /* ==== FOOTER ==== */
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 80px;
+    padding: 20px;
+    letter-spacing: 0.05em;
+  }
+  footer .rule {
+    width: 40px;
+    height: 1px;
+    background: var(--border-hi);
+    margin: 0 auto 16px;
+  }
+
+  /* ==== MOBILE ==== */
+  @media (max-width: 640px) {
+    header.hero { padding: 48px 20px 32px; }
+    #map { height: 420px; }
+    .countdown { gap: 14px; padding: 14px 20px; }
+    .countdown .unit { min-width: 40px; }
+    .countdown .num { font-size: 24px; }
+    section.about h2 { font-size: 28px; }
+    .itin-head h2 { font-size: 32px; }
+    .nodes { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
-<header>
-  <h1>World Trip — Leg 1: Reconnection</h1>
-  <p class="tagline">Spring/summer 2026 · 10 friends &amp; family · Pacific NW &rarr; California &rarr; Hawai‘i</p>
+
+<header class="hero">
+  <div class="kicker">World Trip · Leg 1 · Spring/Summer 2026</div>
+  <h1>A road<br><em>home again</em></h1>
+  <p class="hero-sub">
+    Ten friends. Ten stops. Two thousand miles from Seattle down to San Diego,
+    then one long flight to the islands. Built around the people who shaped me.
+  </p>
+  <div class="countdown" id="countdown" aria-label="Countdown to departure">
+    <div class="unit"><span class="num" id="d">—</span><span class="lbl">days</span></div>
+    <span class="sep">·</span>
+    <div class="unit"><span class="num" id="h">—</span><span class="lbl">hours</span></div>
+    <span class="sep">·</span>
+    <div class="unit"><span class="num" id="m">—</span><span class="lbl">min</span></div>
+    <span class="sep">·</span>
+    <div class="unit"><span class="num" id="s">—</span><span class="lbl">sec</span></div>
+  </div>
 </header>
+
 <main>
-  <div id="map" role="img" aria-label="Trip route map"></div>
+  <div class="map-wrap">
+    <div id="map" role="img" aria-label="Interactive map of the trip route"></div>
+  </div>
   <div class="legend">
-    <span><span class="dot confirmed"></span>Confirmed window</span>
-    <span><span class="dot pending"></span>Pending / TBD</span>
+    <span><span class="dot confirmed"></span>Date locked</span>
+    <span><span class="dot pending"></span>Flex — your call</span>
     <span><span class="dot visited"></span>Already visited</span>
     <span><span class="line-solid"></span>Driving route</span>
     <span><span class="line-dashed"></span>Flight leg</span>
   </div>
 
   <section class="about">
-    <h2>About the trip</h2>
-    <p>This spring and summer I'm taking a long overdue loop down the coast to reconnect with family
-       and old friends. The plan is loose by design — firm dates with Kie (May 1–3) and Monica (May 22),
-       everything else shaped around whatever window works best for each host.</p>
-    <p>I'll be driving south from Oregon through California, then flying out to see Adam in Honolulu
-       before heading back to Portland. If you're on the map, I'd love to see you — pick a date that
-       works and I'll flex everything around it.</p>
-    <p style="margin-bottom:0;color:var(--muted);font-size:13px;">— Robert</p>
+    <h2>Why I'm doing this</h2>
+    <p>
+      After a long couple of years, I'm taking the time to go see the people
+      who matter before another year slips by. The dates are loose by design —
+      I want your window to drive mine, not the other way around.
+    </p>
+    <p>
+      Each stop on this map is one chapter. Your chapter. If you're reading this,
+      you made the cut for a reason — and I want to make the time count.
+    </p>
+    <p class="sig">— Robert</p>
   </section>
 
-  <h2 class="itin">Itinerary</h2>
-  <ol class="itinerary" id="itinerary"></ol>
+  <div class="itin-head">
+    <span class="kicker">The Route</span>
+    <h2>Ten chapters, <em>one story</em></h2>
+  </div>
+
+  <ol class="nodes" id="nodes"></ol>
 
   <footer>
-    Last updated <span id="updated"></span> · private page, not indexed
+    <div class="rule"></div>
+    Last updated <span id="updated"></span> · a quiet corner of the internet, just for this trip
   </footer>
 </main>
 
@@ -98,67 +494,100 @@
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
 (async function () {
-  const res = await fetch('nodes.json');
+  const res = await fetch('nodes.json?v=' + Date.now());
   const data = await res.json();
   const nodes = data.nodes;
   const byN = Object.fromEntries(nodes.map(n => [n.n, n]));
   document.getElementById('updated').textContent = data.updated;
 
-  // Map
-  const map = L.map('map', { scrollWheelZoom: false }).setView([40.5, -122.5], 5);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  // ----- countdown -----
+  const target = new Date(data.departDate + 'T09:00:00-07:00').getTime();
+  function tick() {
+    const now = Date.now();
+    let ms = Math.max(0, target - now);
+    const d = Math.floor(ms / 86400000); ms -= d * 86400000;
+    const h = Math.floor(ms / 3600000);  ms -= h * 3600000;
+    const m = Math.floor(ms / 60000);    ms -= m * 60000;
+    const s = Math.floor(ms / 1000);
+    document.getElementById('d').textContent = d;
+    document.getElementById('h').textContent = String(h).padStart(2,'0');
+    document.getElementById('m').textContent = String(m).padStart(2,'0');
+    document.getElementById('s').textContent = String(s).padStart(2,'0');
+  }
+  tick(); setInterval(tick, 1000);
+
+  // ----- map -----
+  const map = L.map('map', { scrollWheelZoom: false, zoomControl: true }).setView([40.5, -122.5], 5);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
     maxZoom: 18,
-    attribution: '&copy; OpenStreetMap contributors'
+    subdomains: 'abcd',
+    attribution: '&copy; OpenStreetMap &copy; CARTO'
+  }).addTo(map);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', {
+    maxZoom: 18, subdomains: 'abcd', pane: 'overlayPane'
   }).addTo(map);
 
-  const color = { confirmed: '#3fb950', pending: '#d29922', visited: '#8b949e' };
+  const colorFor = s => s === 'confirmed' ? '#7dd87a' : s === 'visited' ? '#a89b84' : '#ffb366';
 
-  // Markers
   const mainlandBounds = [];
   nodes.forEach(n => {
-    const c = color[n.status] || '#f7a13b';
+    const c = colorFor(n.status);
     const icon = L.divIcon({
       className: 'trip-marker',
-      html: `<div style="
-        background:${c};color:#0d1117;border:2px solid #0d1117;
-        width:28px;height:28px;border-radius:50%;
-        display:flex;align-items:center;justify-content:center;
-        font-weight:700;font-size:13px;
-        box-shadow:0 2px 6px rgba(0,0,0,.5);">${n.n}</div>`,
-      iconSize: [28, 28],
-      iconAnchor: [14, 14]
+      html: `<div class="pulse" style="background:${c};"></div>
+             <div class="pin" style="background:${c};">${n.n}</div>`,
+      iconSize: [44, 44],
+      iconAnchor: [22, 22]
     });
-    const m = L.marker([n.lat, n.lon], { icon }).addTo(map);
-    m.bindPopup(`<strong>${n.who}</strong><br>${n.city}<br><em>${n.window}</em>`);
+    const m = L.marker([n.lat, n.lon], { icon, riseOnHover: true }).addTo(map);
+    m.bindPopup(`<h4>${n.who}</h4>
+      <div class="pcity">${n.city.toUpperCase()}</div>
+      <div style="margin-top:8px;font-style:italic;color:#ffd27a">${n.headline}</div>
+      <div class="pwin">${n.window}</div>`);
     if (n.n !== 10) mainlandBounds.push([n.lat, n.lon]);
   });
 
-  // Drive polyline
+  // Drive polyline — glowing double line
   const drivePts = data.driveOrder.map(i => [byN[i].lat, byN[i].lon]);
-  L.polyline(drivePts, { color: '#f7a13b', weight: 3, opacity: 0.85 }).addTo(map);
+  L.polyline(drivePts, { color: '#ff7e5f', weight: 6, opacity: 0.25 }).addTo(map);
+  L.polyline(drivePts, { color: '#ffb366', weight: 2.5, opacity: 0.95 }).addTo(map);
 
-  // Flight polyline (dashed)
+  // Flight polyline (dashed, curved would be nicer but dashed works)
   const flightPts = data.flightLeg.map(i => [byN[i].lat, byN[i].lon]);
-  L.polyline(flightPts, {
-    color: '#58a6ff', weight: 2.5, opacity: 0.9,
-    dashArray: '8,8'
-  }).addTo(map);
+  L.polyline(flightPts, { color: '#c77dff', weight: 2.5, opacity: 0.9, dashArray: '10,10' }).addTo(map);
 
-  map.fitBounds(mainlandBounds, { padding: [40, 40] });
+  map.fitBounds(mainlandBounds, { padding: [50, 50] });
 
-  // Itinerary list
-  const ol = document.getElementById('itinerary');
+  // ----- node cards -----
+  const ol = document.getElementById('nodes');
   nodes.forEach(n => {
     const li = document.createElement('li');
+    li.className = 'node ' + n.status;
+    li.id = 'node-' + n.n;
     li.innerHTML = `
-      <span class="num">${n.n}</span>
-      <div>
-        <span class="who">${n.who}</span>
-        <span class="status-pill ${n.status}">${n.status}</span>
-        <div class="city">${n.city}</div>
+      <div class="top">
+        <div class="n">${n.n}</div>
+        <div>
+          <h3 class="who">${n.who}</h3>
+          <div class="city">${n.city}</div>
+        </div>
       </div>
-      <span class="win">${n.window}</span>`;
+      <div class="headline">${n.headline}</div>
+      <p class="blurb">${n.blurb}</p>
+      <div class="highlight">${n.highlight}</div>
+      <div class="meta">
+        <span class="window">${n.window}</span>
+        <span class="pill">${n.status === 'confirmed' ? 'Date locked' : n.status === 'visited' ? 'Already visited' : 'Your call'}</span>
+      </div>`;
     ol.appendChild(li);
+  });
+
+  // Scroll-reveal
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }});
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.node').forEach((el, i) => {
+    setTimeout(() => io.observe(el), i * 40);
   });
 })();
 </script>
